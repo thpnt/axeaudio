@@ -4,6 +4,6 @@ axeenv/
 
 
 #Ignore data
-data /
+data/
 
 .DS_store
