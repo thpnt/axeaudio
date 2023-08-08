@@ -1,74 +1,50 @@
-#Import relevant packages
-import os
-import wave
 import pyaudio
+import wave
+import time
+import os
 import threading
-from pynput import keyboard
+from config import CHANNELS, CHUNK, FORMAT, RATE, RECORD_SECONDS_MAX, DATA_DIRECTORY
 
-#Set is_recording as a global variable
-is_recording = True
+p = pyaudio.PyAudio()
 
+stream = p.open(format=FORMAT,
+                channels=CHANNELS,
+                rate=RATE,
+                input=True,
+                frames_per_buffer=CHUNK)
 
-#Define the function to stop recording when key is pressed
-def on_press(key):
-    global is_recording
-    try:
-        if key.char=='s':
-            is_recording==False
-    except AttributeError:
-        pass
-    
-#Recording :
-#First we instantiate the audio recorder with pyaudio
+print(f"Recording will start in 3 seconds... (Press 's' to stop or maximum duration is {RECORD_SECONDS_MAX} seconds)")
+time.sleep(3)
+print(f"Recording... (Press 'Ctrl + C' to stop or maximum duration is {RECORD_SECONDS_MAX} seconds)")
 
-def record_audio(CAB=0,file_name='test',MAX_SECONDS=60,FORMAT=pyaudio.paInt16, CHUNK=4096, CHANNELS=1, RATE=44100) :
-    #Instantiate audio recorder
-    audio = pyaudio.PyAudio()
+frames = []
+recording_stopped = threading.Event()
 
-    import time
+def stop_recording():
+    recording_stopped.set()
 
-    #set params
-    stream = audio.open(format=FORMAT,
-            channels=CHANNELS,
-            rate=RATE,
-            input=True,
-            frames_per_buffer=CHUNK)
-    
-    print(f"Recording will start in 3 seconds... (Press 's' to stop or maximum duration is {MAX_SECONDS} seconds)")
-    time.sleep(3)
-    print(f"Recording... (Press 's' to stop or maximum duration is {MAX_SECONDS} seconds)")
+# Start a timer to stop recording after RECORD_SECONDS_MAX seconds
+timer = threading.Timer(RECORD_SECONDS_MAX, stop_recording)
+timer.start()
 
-    frames = []
+try:
+    while not recording_stopped.is_set():
+        data = stream.read(CHUNK, exception_on_overflow = False)
+        frames.append(data)
+except KeyboardInterrupt:
+    print("Finished recording due to keyboard interrupt.")
+else:
+    print("Finished recording due to time limit.")
 
-    
-    # Keep recording in chunks until is_recording becomes False
-    for _ in range(0, int(RATE / CHUNK * MAX_SECONDS)):
-        try:
-            data = stream.read(CHUNK)
-            frames.append(data)
-        except IOError:
-            print("Skipped frame due to overflow")
+stream.stop_stream()
+stream.close()
+p.terminate()
 
-        if not is_recording:
-            print("Stopped recording")
-            break
-
-        
-    #Save the recorded data to a WAV file
-    OUTPUT_FILENAME = f"data/raw/{CAB}/{file_name}.wav"
-    
-    with wave.open(OUTPUT_FILENAME, 'wb') as wf:
-        wf.setnchannels(CHANNELS)
-        wf.setsampwidth(audio.get_sample_size(FORMAT))
-        wf.setframerate(RATE)
-        wf.writeframes(b''.join(frames))
-        
-
-# Start listening to keyboard in a separate thread
-listener = keyboard.Listener(on_press=on_press)
-listener.start()
-
-# Start recording
-record_audio()
-
-listener.join()
+dir = os.makedirs(DATA_DIRECTORY, exist_ok=True)
+file_name = "test" + str(len(os.listdir(DATA_DIRECTORY))-2) + ".wav"
+WAVE_OUTPUT_FILENAME = f"{dir}/{file_name}"
+with wave.open(WAVE_OUTPUT_FILENAME, 'wb') as wf:
+    wf.setnchannels(CHANNELS)
+    wf.setsampwidth(p.get_sample_size(FORMAT))
+    wf.setframerate(RATE)
+    wf.writeframes(b''.join(frames))
