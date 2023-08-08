@@ -9,3 +9,7 @@ axeenv/
 data/
 
 _py__cache__/
+
+.DS_store
+
+
