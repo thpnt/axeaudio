@@ -8,4 +8,6 @@ axeenv/
 #Ignore data
 data/
 
-_py__cache__/
+.DS_Store
+__py__cache__/
+src/__py__cache__/
