@@ -7,3 +7,5 @@ axeenv/
 
 #Ignore data
 data/
+
+.DS_store
