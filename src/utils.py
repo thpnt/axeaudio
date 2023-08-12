@@ -1,9 +1,18 @@
 #Utils
 
-#File storage
+#GPT API
+def get_completion(prompt: str, model="gpt-3.5-turbo") -> str:
+    import openai
+    messages = [{"role": "user", "content": prompt}]
+    response = openai.ChatCompletion.create(
+        model=model,
+        messages=messages,
+        temperature=0,
+    )
+    return response.choices[0].message["content"]
 
-        
-def get_most_recent_file(directory) :
+#File storage   
+def get_most_recent_file(directory: str) -> str:
     import os
     #list files in directory
     files = os.listdir(directory)
@@ -31,14 +40,15 @@ def get_most_recent_file(directory) :
     return files_times[0][0]
         
         
-def store_raw_transcript(content, directory):
+def store_transcript(content: str, destination_directory: str, data_directory: str):
     import os.path
 
     #Get file_name based on the the audio file that was transcripted
-    file_name = get_most_recent_file('data/raw')[:-4][-5:] + '.txt'
-    full_path = os.path.join(directory, file_name)
+    file_name = get_most_recent_file(data_directory)[:-4][-5:] + '.txt'
+    full_path = os.path.join(destination_directory, file_name)
 
     #Open the file and write the content in it
-    file = open(full_path, 'w')
-    file.write(content)
-    file.close()
+    with open(full_path, 'w') as file :
+        file.write(content)
+    return
+
