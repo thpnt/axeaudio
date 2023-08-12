@@ -42,7 +42,7 @@ p.terminate()
 
 dir = os.makedirs(DATA_DIRECTORY, exist_ok=True)
 file_name = "test" + str(len(os.listdir(DATA_DIRECTORY))-2) + ".wav"
-WAVE_OUTPUT_FILENAME = f"{dir}/{file_name}"
+WAVE_OUTPUT_FILENAME = f"{DATA_DIRECTORY}/{file_name}"
 with wave.open(WAVE_OUTPUT_FILENAME, 'wb') as wf:
     wf.setnchannels(CHANNELS)
     wf.setsampwidth(p.get_sample_size(FORMAT))
