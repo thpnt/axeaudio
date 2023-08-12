@@ -8,6 +8,7 @@ import os
 openai.api_key = os.getenv("OPENAI_API_KEY")
 openai.organizations = "org-cMwR4RMO7oQ1BYbT8J6l48ai"
 
+
 #Get the audio most recent_audio files in the data_directory
 cwd = os.getcwd()
 PATH = os.path.abspath(os.path.join(cwd, os.pardir))
