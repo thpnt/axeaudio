@@ -1,6 +1,11 @@
 #Utils
 
 #GPT API
+import openai
+import os
+#OpenAI creds
+openai.api_key = os.getenv("OPENAI_API_KEY")
+openai.organizations = "org-cMwR4RMO7oQ1BYbT8J6l48ai"
 def get_completion(prompt: str, model="gpt-3.5-turbo") -> str:
     import openai
     messages = [{"role": "user", "content": prompt}]

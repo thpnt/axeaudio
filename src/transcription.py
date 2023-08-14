@@ -1,21 +1,22 @@
 from config import DATA_DIRECTORY, TRANSCRIPT_DIRECTORY, EDITED_DIRECTORY
 from prompt import prompt_article, prompt_cdc
 from utils import get_most_recent_file, store_transcript, get_completion
+from dotenv import load_dotenv
 import openai
 import os
 
 
 #OpenAI creds
+_  = load_dotenv()
 openai.api_key = os.getenv("OPENAI_API_KEY")
 openai.organizations = "org-cMwR4RMO7oQ1BYbT8J6l48ai"
-
 
 #Get the audio most recent_audio files in the data_directory
 #cwd = os.getcwd()
 #PATH = os.path.abspath(os.path.join(cwd, os.pardir))
 PATH = os.getcwd()
 file_name = get_most_recent_file(DATA_DIRECTORY)
-audio_file = open(f"{PATH}/{file_name}")
+audio_file = open(f"{PATH}/{file_name}", 'rb')
 
 
 #Transcript audio_file
