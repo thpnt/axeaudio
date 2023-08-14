@@ -2,14 +2,14 @@ from recording import record_audio
 from transcription import process_audio
 
 import tkinter as tk
+from tkinter import simpledialog
 
 def gui_record_audio():
-    record_audio()
-    status_label.config(text="Recording will start in 3s. Recording audio...")
+    record_audio(status_label, root)
+    
 
 def gui_process_audio():
-    process_audio()
-    status_label.config(text="Processing audio...")
+    process_audio(status_label, root)
 
 def quit_app():
     root.destroy()  # Close the GUI window
@@ -30,7 +30,7 @@ record_button = tk.Button(root, text="RECORD", command=gui_record_audio, bg="lig
 record_button.pack(pady=20)
 
 # Create the PROCESS button
-process_button = tk.Button(root, text="PROCESS", command=gui_process_audio, bg="light blue", fg="black", bd=2, highlightbackground="light grey")
+process_button = tk.Button(root, text="TRANSCRIPT", command=gui_process_audio, bg="light blue", fg="black", bd=2, highlightbackground="light grey")
 process_button.pack(pady=20)
 
 # Create the QUIT button
