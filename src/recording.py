@@ -1,4 +1,4 @@
-def record_audio(status_label, root) :
+def record_audio(status_label, root, event) :
     import pyaudio
     import wave
     import time
@@ -14,24 +14,24 @@ def record_audio(status_label, root) :
                     input=True,
                     frames_per_buffer=CHUNK)
 
-    status_label.config(text = f"Recording will start in 3 seconds... (Press 's' to stop or maximum duration is {RECORD_SECONDS_MAX} seconds)")
+    status_label.config(text = f"Recording will start in 3 seconds... ")
     root.update()
     time.sleep(3)
-    status_label.config(text = f"Recording... (Press 'Ctrl + C' to stop or maximum duration is {RECORD_SECONDS_MAX} seconds)")
+    status_label.config(text = f"Recording... (Press 'STOP RECORD' to stop or maximum duration is {RECORD_SECONDS_MAX} seconds)")
     root.update()
     
     frames = []
-    recording_stopped = threading.Event()
+    #recording_stopped = threading.Event()
 
-    def stop_recording():
-        recording_stopped.set()
-
-    # Start a timer to stop recording after RECORD_SECONDS_MAX seconds
-    timer = threading.Timer(RECORD_SECONDS_MAX, stop_recording)
-    timer.start()
+    #def stop_recording():
+    #    event.set()
+#
+    ## Start a timer to stop recording after RECORD_SECONDS_MAX seconds
+    #timer = threading.Timer(RECORD_SECONDS_MAX, stop_recording)
+    #timer.start()
 
     try:
-        while not recording_stopped.is_set():
+        while not event.is_set():
             data = stream.read(CHUNK, exception_on_overflow = False)
             frames.append(data)
     except KeyboardInterrupt:
