@@ -12,7 +12,7 @@ def process_audio(status_label, root) :
     #OpenAI creds
     _  = load_dotenv()
     openai.api_key = os.getenv("OPENAI_API_KEY")
-    openai.organizations = "org-cMwR4RMO7oQ1BYbT8J6l48ai"
+    openai.organizations = os.getenv("OPENAI_ORGANISATION_KEY")
 
         
     status_label.config(text = "Transcribing text with Whisper ...")
